@@ -7,7 +7,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/")
 def default():
-    return {"This is the production server"}
+    return ["This is the production server"]
 
 @app.route("/home")
 @cross_origin()
