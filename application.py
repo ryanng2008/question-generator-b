@@ -22,6 +22,6 @@ def get_all_categories():
 
 if __name__ == "__main__":
     print('server ran')
-    app.run(debug=False)
+    app.run(debug=True)
 
     

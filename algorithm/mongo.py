@@ -9,7 +9,7 @@ uri = 'mongodb+srv://ryandoesnothing1:0wt60G4Vv2e3fv0u@firstvisionary.06rzakp.mo
 db_name = 'main'
 category_collection = 'categories'
 questions_collection = 'questions'
-client = MongoClient(uri, tls=True, tlsAllowInvalidCertificates=True)
+client = MongoClient(uri, tls=True, ) #tlsAllowInvalidCertificates=True
 db = client[db_name]
 categories = db[category_collection]
 questions = db[questions_collection]
