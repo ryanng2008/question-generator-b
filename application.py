@@ -5,6 +5,10 @@ import algorithm.data_utils as du
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+@app.route("/")
+def default():
+    return {"This is the production server"}
+
 @app.route("/home")
 @cross_origin()
 def home():
