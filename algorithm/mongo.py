@@ -1,6 +1,6 @@
-import pymongo
+#import pymongo
 from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+#from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
 
 uri = 'mongodb+srv://ryandoesnothing1:0wt60G4Vv2e3fv0u@firstvisionary.06rzakp.mongodb.net/'
