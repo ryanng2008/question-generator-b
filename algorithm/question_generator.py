@@ -1,68 +1,115 @@
+import sympy as sp
 import random
-import re
 
-def question_generator(question_string, rvs, pvs, answer_expressions={}, answer_string='', ):
-    evaluated_rvs = get_rvs(rvs)
-    variables = get_variables(pvs, evaluated_rvs)
+
+# RV EVALUATION
+# - Initial input: array of hashmaps w/ pairs (variable, str) (lb, int) (hb, int)
+# for each, generate random integer (max inclusive); return new hashmap
+
+def evaluate_rvs(raw_rvs: list[dict[str, int]]) -> dict[str, int]:
+    evaluated_rvs: dict[str, int] = {}
+    for rv in raw_rvs:
+        value = random.randint(int(rv['lb']), int(rv['hb']))
+        evaluated_rvs[rv['name']] = value
+    return evaluated_rvs
+    
+
+# PV EVALUATION
+
+# - Initial input: hashmap (variable, clean_expression)
+# - parse each expression with sympy, return a new hashmap
+
+def evaluate_pvs(raw_pvs: list[dict[str, str]], rvs: dict[str, int]) -> dict[str, float]:
+    evaluated_pvs = {}
+    for item in raw_pvs:
+        evaluated_pvs[item['varName']] = evaluate_pv(item['latex'], rvs)
+    return evaluated_pvs
+def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float]) -> float:
+    # STUFF TO ADD
+    # Function filters
+    raw_pv_expression = raw_pv_expression.strip("{}")
     try:
-        question = format(question_string, variables)
-        # find a way so that even if there are more variables then you can still run it without errors
+        expression = sp.sympify(raw_pv_expression)
+        #print(f'expression: {expression} of type {type(expression)}')
     except:
-        question = 'Error in question text'
-        print('HERE IS THE ERROR \n _________')
-        print(question_string)
-        #placeholder_indices = [int(idx) for idx in re.findall(r"{(\d+)}(?![{])", question_string)]
-        #question = re.sub(r"{\d+}(?![{])", lambda match: variables[placeholder_indices.pop(0)], question_string)
-
-    #answer_variables = get_variables(answer_expressions, variables)
-    try:
-        #print("answer variables:")
-        #print(answer_variables)
-        answer = format(answer_string, variables)
+        # syntax error
+        print('Error: syntax error while running sympify')
+        return None
+    rvs_as_tuples = list(rvs.items())
+    try: 
+        substituted = expression.subs(rvs_as_tuples)
+        #print(f'substituted: {substituted}')
     except:
-        answer = 'Error in answer text'
-        #placeholder_indices = [int(idx) for idx in re.findall(r"{(\d+)}(?![{])", answer_string)]
-        #answer = re.sub(r"{\d+}(?![{])", lambda match: answer_variables[placeholder_indices.pop(0)], answer_string)
-    #return [question, answer]
-    return {'question': question, 'answer': answer}
+        print('Error: syntax error while running subs')
+        return None
+
+    final_value = substituted.evalf()
+    #print(f'final value: {final_value}')
+    if not isinstance(final_value, sp.Float):
+        print('Error: not an instance of Float')
+        # equivalent to syntax error
+        return None
+    return float(final_value)
+    #raw pv expression is a string, rvs is a hashmap (str, float)
+    # convert raw_pv into sympy expression
+    # substitute it in
+    # return a value
 
 
-def get_rvs(rvs):
-    values = {}
-    for rv in rvs:
-        values[rv['name']] = random.randint(int(rv['lb']), int(rv['hb']+1))
-    return values
 
-def get_variable_funcs(pvs, evaluated_rvs):
-    variables = {}
-    for pv_name, eval_string in pvs.items():
-        variables[pv_name] = eval_string.format(**evaluated_rvs)
-    return variables
+# QUESTION STRING SUBSTITUTION (plus answer string)
+# - input: string with "[[variable]]" delimiting + pvs dict (name, value)
+# - custom substitution function to replace with the hashmap values
 
-def evaluate(func):
-    # add some sanitized?
-    return eval(func)
-
-def format(question, variables):
-    # add some sanitizing?
-    return question.format(**variables)
-
-def get_variables(expressions, variables):
-    processed_variables = {}
-    functions = get_variable_funcs(expressions, variables)
-    for name, func in functions.items():
-        processed_variables[name] = evaluate(func)
-    return processed_variables
+def substitute_question(pvs: dict[str, float], question_string: str) -> str:
+    # implement exceptions later
+    subbed_string = question_string
+    for key, value in pvs.items():
+        #print(f'{key} and {value}')
+        if value is None:
+            print(f'Error: Value is none for pair {key} and {value}')
+            continue 
+        # Replace [[key]] in the string with its corresponding value
+        subbed_string = subbed_string.replace(f"[[{key}]]", str(round(value, 2)))
+    print(f'subbed question string: {subbed_string}')
+    return subbed_string
 
 
-if __name__ == "__main__":
-    x = question_generator(
-        "is {a} or {b} bigger?", 
-                    [{'name': 'a','lb': 3, 'hb': 12},
-                    {'name': 'b','lb': 3, 'hb': 12},
-                    ],
-                    {'a': '{a}+6', 'b': '{a} + {b}',},
-                    {'answer': '{a}+{b}'},
-                    "{answer} dogs"
-                    )
-    print(x)
+## PARENT FUNCTION - does all of it
+def question_generator(raw_rvs, raw_pvs, question_string, answer_string='') -> str:
+    evaluated_rvs = evaluate_rvs(raw_rvs)
+    evaluated_pvs = evaluate_pvs(raw_pvs, evaluated_rvs)
+    final_question = substitute_question(evaluated_pvs, question_string)
+    final_answer = ''#substitute_question(evaluated_pvs, answer_string)
+    return { 'question': final_question, 'answer': final_answer}
+
+
+
+
+# PLANNING & SYMPY TESTING
+
+
+# x, y, z = symbols("x y z")
+
+# expr = cos(x) + 1
+# expr.subs(x, y)
+
+
+# str_expr = "tan sin 434fh"
+# expr = sympify(str_expr)
+# value = expr.subs('EN', 2)
+# print(value)
+
+# rvs_dict = {
+#     'A': 3,
+#     'B': 4,
+#     'C': 5
+# }
+# subs_values = list(rvs_dict.items())
+
+
+# PRIMITIVE FUNCTIONS: 
+# - given the question string, rvs, pvs, and answer string, 
+# - evaluate rvs into values
+# - evaluate pvs into values (input rvs & pvs) - NEEDS SYMPY
+# - substitute into question string 

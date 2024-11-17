@@ -1,8 +1,10 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 import algorithm.data_utils as du
 from config.config import get_config
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 @app.route("/home")
 def home():
@@ -20,6 +22,12 @@ def get_category_details(categoryid: str):
 @app.route("/categorylist")
 def get_all_categories():
     return du.get_all_categories()
+
+@app.route("/postquestion", methods=['POST'])
+def post_new_question():
+    data = request.get_json()
+    result = du.post_new_question(data['question'], data['rvs'], data['pvs'], data['answer'])
+    return jsonify(result)
 
 if __name__ == "__main__":
     print('server ran')
