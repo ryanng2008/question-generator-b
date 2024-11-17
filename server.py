@@ -4,7 +4,7 @@ import algorithm.data_utils as du
 from config.config import get_config
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://main.d2ol3fnyw1r498.amplifyapp.com"]}})
 
 @app.route("/home")
 def home():
