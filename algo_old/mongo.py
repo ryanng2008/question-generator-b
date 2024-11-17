@@ -1,9 +1,17 @@
+# RAW DATA EXTRACTION FROM MONGO
 import pymongo
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
+##from dotenv import load_dotenv # type: ignore
+##from pathlib import Path
+##import os
+##env_path = Path('./../') / '.env'
+##load_dotenv(dotenv_path=env_path)
 
-uri = 'mongodb+srv://ryandoesnothing1:0wt60G4Vv2e3fv0u@firstvisionary.06rzakp.mongodb.net/'
+
+#uri = os.getenv("URI")
+uri = 'mongodb+srv://ryandoesnothing1:0wt60G4Vv2e3fv0u@firstvisionary.06rzakp.mongodb.net/?retryWrites=true&w=majority&appName=FirstVisionary'
 db_name = 'main'
 category_collection = 'categories'
 questions_collection = 'questions'
@@ -15,10 +23,10 @@ questions = db[questions_collection]
 def post_question(question_object: dict):
     try:
         result = questions.insert_one(question_object)
-        return result.inserted_id
+        return result
     except Exception as e:
         print("Error inserting question document: ", e)
-        return None
+        return 0
 
 
 # WORKING - # Get Full Category ID List
@@ -36,7 +44,6 @@ def get_all_categories():
     category_objects = []
     categories_get = categories.find({})
     for document in categories_get:
-        document['_id'] = str(document['_id'])
         category_objects.append(document)
     #print(category_objects)
     return category_objects
@@ -46,17 +53,16 @@ def get_category_object(category_id):
     cat_object = categories.find_one({'_id': ObjectId(str(category_id))}) # THIS IS THE QUERY
     if cat_object is None:
         return 0
-    cat_object['_id'] = str(cat_object['_id'])
     print(cat_object)
     return cat_object
 
 # WORKING - Get Question Objects from Question ID
 def get_question_object(question_id):
-    #print(f'getting {question_id}')
+    print(f'getting {question_id}')
     #question_object = questions.find_one({'questionId': str(question_id)})
     question_object = questions.find_one({'_id': ObjectId(str(question_id))}) # THIS IS THE QUERY 
     # When you do find, you need to do for document in cursor.
-    #print(question_object)
+    print(question_object)
     if question_object is None:
         print(f'FAILED: Object for QID ({question_id}) does not exist. (above)')
         return 0
@@ -64,7 +70,6 @@ def get_question_object(question_id):
     return question_object
 
 # Array Get version of this
-# TODO: Make this a bulk query
 def get_question_objects(question_ids):
     question_objects = []
     for question_id in question_ids:
@@ -73,3 +78,15 @@ def get_question_objects(question_ids):
             question_objects.append(question_object)
     print(question_objects)
     return question_objects
+
+# SANDBOXING
+
+if __name__ == "__main__":
+    question_object = questions.find({"_id": ObjectId('669cf67d156466a5ee5fe8d1')})
+    for document in question_object:
+        print('yo')
+        print(document)
+    print(question_object)
+
+
+#get_question_object(2)

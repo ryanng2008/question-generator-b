@@ -1,29 +1,19 @@
-import algorithm.mongo as db
-import algorithm.qg_wrapper as qg
+import mongo as db
+import qg_wrapper as qg
+from algorithm import qg_wrapper as new_qg
+# Process the mongo data here
+
 
 # ---------------- PARENT FUNCTIONS ----------------
-def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str ='No Answer'):
-    document = {
-        'question': question,
-        'rvs': rvs,
-        'pvs': pvs,
-        'answer': answer
-    }
-    inserted_id = db.post_question(document)
-    if inserted_id:
-        return {'success': True, 'inserted_id': str(inserted_id)}
-    else:
-        return {'success': False, 'message': 'Failed to insert question'}
-    
 def get_category(cid: str): # Get Category Object from Category ID
     data = db.get_category_object(cid)
-    #data['_id'] = str(data['_id'])
+    data['_id'] = str(data['_id'])
     return data
 
 def get_all_categories(): # Get the whole list of category OBJECTS
     datas = db.get_all_categories()
-    #for data in datas:
-    #    data['_id'] = str(data['_id'])
+    for data in datas:
+        data['_id'] = str(data['_id'])
     return datas
 
 def questions_from_cid(cid: str, count: int):
@@ -31,8 +21,6 @@ def questions_from_cid(cid: str, count: int):
     questions = []
     if(str(count) == '-1'):
         questions = get_questions_from_qids(qids)
-        #print('We are here (v1)')
-        #print(questions)
         return questions
     while len(questions) < count:
         if(count < len(questions) + len(qids)):
@@ -42,10 +30,20 @@ def questions_from_cid(cid: str, count: int):
         else:
             new_questions = get_questions_from_qids(qids)
             questions.extend(new_questions)
-    #print('We are here (v2)')
-    #print(questions)
     return questions
 
+def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str ='No Answer'):
+    document = {
+        question: question,
+        rvs: rvs,
+        pvs: pvs,
+        answer: answer
+    }
+    result = db.post_question(document)
+    if(result == 0):
+        return {'success': False}
+    else:
+        return {'success': True, 'message': result}
 
 
 # ---------------- SUB FUNCTIONS ----------------
@@ -55,9 +53,6 @@ def get_all_category_ids(): # Get the whole list of category IDs
     return cids
 
 def get_questions_from_qids(qids: list[str]):
-    # TODO: New Method
-    # 1. Bulk Query 
-    # 2. Run each object through the generator and generate
     questions = []
     for qid in qids:
         question = get_question_from_qid(qid)
@@ -68,6 +63,8 @@ def get_qids_from_cid(cid: str): # Get a list of Question IDs from a category
     category = db.get_category_object(cid)
     qids = category['questions']
     return qids
+
+
 
 def get_question_from_qid(qid: str): # Generate question from the Question ID 
     # get the question object details from mong
@@ -81,12 +78,25 @@ def get_question_from_qid(qid: str): # Generate question from the Question ID
     question_string = question_object['question'] or 'question string is not present in the question object'
     rvs = question_object['rvs'] or {}
     pvs = question_object['pvs'] or {}
-    answer_string = question_object['answer'] or 'answer string is not present in the answer object'
+    answer_string = question_object['answer']
     #print(answer_string)
-    # TODO: FIX ANSWER STRING AND ANSWER EXPRESSIONS 
+    # TO DO FIX ANSWER STRING AND ANSWER EXPRESSIONS 
 
     # MODIFY THIS ORIGIN
-    final_question = qg.generate_question(rvs, pvs, question_string, answer_string)
+    final_question = qg.generate_question(question_string, rvs, pvs, {}, answer_string)
 
     return final_question
 
+# UNUSED
+# ------------------
+
+def get_question_objects(qids: list[str]):
+    question_list = db.get_question_objects(qids)
+    for question in question_list:
+        question['_id'] = str(question['_id'])
+    return question_list
+
+#def questions_from_cid(cid: str):
+#    qids = get_qids_from_cid(cid)
+#    questions = get_questions_from_qids(qids)
+#    return questions
