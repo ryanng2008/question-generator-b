@@ -44,7 +44,7 @@ def get_all_categories():
 # WORKING - Get Category Object from Category ID
 def get_category_object(category_id):
     cat_object = categories.find_one({'_id': ObjectId(str(category_id))}) # THIS IS THE QUERY
-    if cat_object is None:
+    if cat_object == None:
         return 0
     cat_object['_id'] = str(cat_object['_id'])
     print(cat_object)
