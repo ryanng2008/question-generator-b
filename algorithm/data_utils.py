@@ -1,5 +1,5 @@
-import algorithm.mongo as db
-import algorithm.qg_wrapper as qg
+import mongo as db
+import qg_wrapper as qg
 
 # ---------------- PARENT FUNCTIONS ----------------
 def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str='', categoryid: str=''):
@@ -11,12 +11,20 @@ def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, s
     }
     inserted_id = db.post_question(document)
     if inserted_id:
-        add_category = db.add_question_to_category(categoryid, inserted_id)
+        add_category = db.add_question_to_category(inserted_id, categoryid)
         if(add_category):
             return {'success': True, 'inserted_id': str(inserted_id)}
     else:
         return {'success': False, 'message': 'Failed to insert question'}
     
+if __name__ == "__main__":
+    question = ''
+    rvs = [{'name': 'a', 'lb': 1, 'hb': 5}]
+    pvs = [{'varName': 'BALANCE', 'latex': 'a^2'}]
+    answer = ''
+    categoryid = '669cf67d156466a5ee5fe8d3'
+    post_new_question(question, rvs, pvs, answer, categoryid)
+
 def get_category(cid: str): # Get Category Object from Category ID
     data = db.get_category_object(cid)
     #data['_id'] = str(data['_id'])

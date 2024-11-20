@@ -12,6 +12,8 @@ db = client[db_name]
 categories = db[category_collection]
 questions = db[questions_collection]
 
+# TO DO: Wrap everything in a try catch
+
 def post_question(question_object: dict):
     try:
         result = questions.insert_one(question_object)
@@ -89,11 +91,8 @@ def get_question_objects(question_ids):
 
 def add_question_to_category(qid, cid):
     try:
-        categories.update_one(
-        {"_id": ObjectId(cid)},
-        {"$push": {"questions": qid}}
-        )
-        return True
+        answer = categories.update_one({"_id": ObjectId(cid)}, {"$push": {"questions": qid}})
+        return answer.matched_count > 0
     except Exception as e:
         print(f'Error adding question {qid} to category {cid}')
         return None
