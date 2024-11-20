@@ -1,4 +1,4 @@
-import question_generator as qg
+import algorithm.question_generator as qg
 
 def generate_question(rvs, pvs, question_string, answer_string=''):
     question = qg.question_generator(rvs, pvs, question_string, answer_string)

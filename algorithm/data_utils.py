@@ -17,13 +17,13 @@ def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, s
     else:
         return {'success': False, 'message': 'Failed to insert question'}
     
-if __name__ == "__main__":
-    question = ''
-    rvs = [{'name': 'a', 'lb': 1, 'hb': 5}]
-    pvs = [{'varName': 'BALANCE', 'latex': 'a^2'}]
-    answer = ''
-    categoryid = '669cf67d156466a5ee5fe8d3'
-    post_new_question(question, rvs, pvs, answer, categoryid)
+# if __name__ == "__main__":
+#     question = ''
+#     rvs = [{'name': 'a', 'lb': 1, 'hb': 5}]
+#     pvs = [{'varName': 'BALANCE', 'latex': 'a^2'}]
+#     answer = ''
+#     categoryid = '669cf67d156466a5ee5fe8d3'
+#     post_new_question(question, rvs, pvs, answer, categoryid)
 
 def get_category(cid: str): # Get Category Object from Category ID
     data = db.get_category_object(cid)
