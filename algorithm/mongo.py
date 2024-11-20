@@ -86,3 +86,14 @@ def get_question_objects(question_ids):
             question_objects.append(question_object)
     print(question_objects)
     return question_objects
+
+def add_question_to_category(qid, cid):
+    try:
+        categories.update_one(
+        {"_id": ObjectId(cid)},
+        {"$push": {"questions": qid}}
+        )
+        return True
+    except Exception as e:
+        print(f'Error adding question {qid} to category {cid}')
+        return None

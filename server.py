@@ -30,7 +30,7 @@ def get_all_categories():
 @app.route("/postquestion", methods=['POST'])
 def post_new_question():
     data = request.get_json()
-    result = du.post_new_question(data['question'], data['rvs'], data['pvs'], data['answer'])
+    result = du.post_new_question(data['question'], data['rvs'], data['pvs'], data['answer'], data['categoryid'])
     return jsonify(result)
 
 if __name__ == "__main__":

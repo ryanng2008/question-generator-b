@@ -2,16 +2,18 @@ import algorithm.mongo as db
 import algorithm.qg_wrapper as qg
 
 # ---------------- PARENT FUNCTIONS ----------------
-def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str ='No Answer'):
+def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str='', categoryid: str=''):
     document = {
         'question': question,
         'rvs': rvs,
         'pvs': pvs,
-        'answer': answer
+        'answer': answer, 
     }
     inserted_id = db.post_question(document)
     if inserted_id:
-        return {'success': True, 'inserted_id': str(inserted_id)}
+        add_category = db.add_question_to_category(categoryid, inserted_id)
+        if(add_category):
+            return {'success': True, 'inserted_id': str(inserted_id)}
     else:
         return {'success': False, 'message': 'Failed to insert question'}
     
