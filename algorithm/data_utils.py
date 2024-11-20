@@ -1,5 +1,5 @@
-import mongo as db
-import qg_wrapper as qg
+import algorithm.mongo as db
+import algorithm.qg_wrapper as qg
 
 # ---------------- PARENT FUNCTIONS ----------------
 def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str='', categoryid: str=''):
