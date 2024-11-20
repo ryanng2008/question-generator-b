@@ -50,6 +50,19 @@ def get_category_object(category_id):
     print(cat_object)
     return cat_object
 
+def get_category_name_regex(query: str):
+    results = categories.find({"title": {"$regex": query, "$options": "i"}})
+    categories_list = list(results)
+    for item in categories_list:
+        item['_id'] = str(item['_id'])
+    return categories_list
+
+def search_category_perms(query: str, user: str):
+    # TODO: ADD PERMS LOGIC WITH USER 
+    results = categories.find({"name": {"$regex": query, "$options": "i"}})
+    categories_list = results.to_list()
+    return categories_list
+
 # WORKING - Get Question Objects from Question ID
 def get_question_object(question_id):
     #print(f'getting {question_id}')

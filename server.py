@@ -19,6 +19,10 @@ def get_question_list(categoryid: str, count: int):
 def get_category_details(categoryid: str):
     return du.get_category(categoryid)
 
+@app.route("/categorysearch/<namequery>")
+def get_category_details_name(namequery: str):
+    return du.get_categories_by_name(namequery)
+
 @app.route("/categorylist")
 def get_all_categories():
     return du.get_all_categories()

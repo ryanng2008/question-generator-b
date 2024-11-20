@@ -20,6 +20,10 @@ def get_category(cid: str): # Get Category Object from Category ID
     #data['_id'] = str(data['_id'])
     return data
 
+def get_categories_by_name(query: str):
+    data = db.get_category_name_regex(query)
+    return data
+
 def get_all_categories(): # Get the whole list of category OBJECTS
     datas = db.get_all_categories()
     #for data in datas:
