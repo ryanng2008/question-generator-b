@@ -51,7 +51,7 @@ def get_category_object(category_id):
         return 0
     cat_object['_id'] = str(cat_object['_id'])
     print(cat_object)
-    return cat_object
+    return json_util.dumps(cat_object)
 
 def get_category_name_regex(query: str):
     results = categories.find({"title": {"$regex": query, "$options": "i"}})
@@ -88,7 +88,7 @@ def get_question_objects(question_ids):
         if question_object != 0: 
             question_objects.append(question_object)
     print(question_objects)
-    return question_objects
+    return json_util.dumps(question_objects)
 
 def add_question_to_category(qid, cid):
     try:
