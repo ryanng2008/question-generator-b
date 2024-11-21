@@ -2,6 +2,7 @@
 from pymongo.mongo_client import MongoClient
 #from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
+from bson import json_util
 
 uri = 'mongodb+srv://ryandoesnothing1:0wt60G4Vv2e3fv0u@firstvisionary.06rzakp.mongodb.net/'
 db_name = 'main'
@@ -25,10 +26,10 @@ def post_question(question_object: dict):
 
 # WORKING - # Get Full Category ID List
 def get_category_id_list():
-    category_ids = categories.find({}, {'id': True})
+    category_ids = categories.find({}, {'_id': True})
     category_id_list = []
     for document in category_ids:
-        category_id_list.append(document['id'])
+        category_id_list.append(document['_id'])
     print(category_id_list)
     return category_id_list
 
@@ -37,11 +38,11 @@ def get_category_id_list():
 def get_all_categories():
     category_objects = []
     categories_get = categories.find({})
-    for document in categories_get:
-        document['_id'] = str(document['_id'])
-        category_objects.append(document)
+    category_objects = list(categories_get)
+    for item in category_objects:
+        item["_id"] = str(item["_id"])
     #print(category_objects)
-    return category_objects
+    return json_util.dumps(category_objects)
 
 # WORKING - Get Category Object from Category ID
 def get_category_object(category_id):
