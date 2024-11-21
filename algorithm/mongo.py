@@ -42,7 +42,7 @@ def get_all_categories():
     for item in category_objects:
         item["_id"] = str(item["_id"])
     #print(category_objects)
-    return json_util.dumps(category_objects)
+    return category_objects
 
 # WORKING - Get Category Object from Category ID
 def get_category_object(category_id):
@@ -51,14 +51,14 @@ def get_category_object(category_id):
         return 0
     cat_object['_id'] = str(cat_object['_id'])
     print(cat_object)
-    return json_util.dumps(cat_object)
+    return cat_object
 
 def get_category_name_regex(query: str):
     results = categories.find({"title": {"$regex": query, "$options": "i"}})
     categories_list = list(results)
     for item in categories_list:
         item['_id'] = str(item['_id'])
-    return json_util.dumps(categories_list)
+    return categories_list
 
 def search_category_perms(query: str, user: str):
     # TODO: ADD PERMS LOGIC WITH USER 
@@ -88,7 +88,7 @@ def get_question_objects(question_ids):
         if question_object != 0: 
             question_objects.append(question_object)
     print(question_objects)
-    return json_util.dumps(question_objects)
+    return question_objects
 
 def add_question_to_category(qid, cid):
     try:

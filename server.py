@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 import algorithm.data_utils as du
 from config.config import get_config
+from bson import json_util
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://main.d2ol3fnyw1r498.amplifyapp.com"]}})
@@ -13,19 +15,23 @@ def home():
 @app.route("/questionlist/<categoryid>", defaults={'count': -1})
 @app.route("/questionlist/<categoryid>/<count>")
 def get_question_list(categoryid: str, count: int):
-    return du.questions_from_cid(categoryid, int(count))
+    content = du.questions_from_cid(categoryid, int(count))
+    return json_util.dumps(content)
 
 @app.route("/categorydetails/<categoryid>")
 def get_category_details(categoryid: str):
-    return du.get_category(categoryid)
+    content = du.get_category(categoryid)
+    return json_util.dumps(content)
 
 @app.route("/categorysearch/<namequery>")
 def get_category_details_name(namequery: str):
-    return du.get_categories_by_name(namequery)
+    content = du.get_categories_by_name(namequery)
+    return json_util.dumps(content)
 
 @app.route("/categorylist")
 def get_all_categories():
-    return du.get_all_categories()
+    content = du.get_all_categories()
+    return json_util.dumps(content)
 
 @app.route("/postquestion", methods=['POST'])
 def post_new_question():

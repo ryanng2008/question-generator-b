@@ -1,5 +1,7 @@
 import algorithm.mongo as db
 import algorithm.qg_wrapper as qg
+from bson import json_util
+
 
 # ---------------- PARENT FUNCTIONS ----------------
 def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str='', categoryid: str=''):
