@@ -58,7 +58,7 @@ def get_category_name_regex(query: str):
     categories_list = list(results)
     for item in categories_list:
         item['_id'] = str(item['_id'])
-    return categories_list
+    return json_util.dumps(categories_list)
 
 def search_category_perms(query: str, user: str):
     # TODO: ADD PERMS LOGIC WITH USER 
