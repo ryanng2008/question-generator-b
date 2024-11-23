@@ -1,3 +1,0 @@
-- Install SymPy  
-- Learn SymPy
-- Use python-dotenv for all environment variables
