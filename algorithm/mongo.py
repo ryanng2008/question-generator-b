@@ -3,12 +3,16 @@ from pymongo.mongo_client import MongoClient
 #from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
 from bson import json_util
+from dotenv import load_dotenv
+import os
 
-uri = 'mongodb+srv://ryandoesnothing1:0wt60G4Vv2e3fv0u@firstvisionary.06rzakp.mongodb.net/'
-db_name = 'main'
-category_collection = 'categories'
-questions_collection = 'questions'
-client = MongoClient(uri, tls=True, tlsAllowInvalidCertificates=True) # Fix this temporary thing
+load_dotenv()
+
+uri = os.getenv('URI')
+db_name = os.getenv('DB_NAME')
+category_collection = os.getenv('CATEGORY_COLL')
+questions_collection = os.getenv('QUESTIONS_COLL')
+client = MongoClient(uri, tls=True) # Fix this temporary thing
 db = client[db_name]
 categories = db[category_collection]
 questions = db[questions_collection]

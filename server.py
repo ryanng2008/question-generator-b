@@ -1,9 +1,8 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import algorithm.data_utils as du
 from config.config import get_config
 from bson import json_util
-
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "https://main.d2ol3fnyw1r498.amplifyapp.com"]}})
@@ -39,9 +38,20 @@ def post_new_question():
     result = du.post_new_question(data['question'], data['rvs'], data['pvs'], data['answer'], data['categoryid'])
     return jsonify(result)
 
+# @app.before_request
+# def before_request():
+#     request.start_time = time.time()
+
+# @app.after_request
+# def after_request(response):
+#     request.end_time = time.time()
+#     request_time = request.end_time - request.start_time
+#     print(f"Request time: {request_time} seconds")
+#     return response
+
 if __name__ == "__main__":
     print('server ran')
-    app.run(debug=False)
+    app.run(debug=True)
     app.config.from_object(get_config())
 
     

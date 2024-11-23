@@ -97,21 +97,18 @@ def get_qids_from_cid(cid: str): # Get a list of Question IDs from a category
     return qids
 
 
+
 def get_question_from_qid(qid: str): # Generate question from the Question ID 
     # get the question object details from mong
     # input the details into qg_wrapper 
     # return the result
     question_object = db.get_question_object(qid)
-    #print('QUESTION OBJECT')
-    #print(question_object)
     if question_object == 0:
         return {'question': 'No Question', 'answer': 'No Answer'} # Change this 
     question_string = question_object['question'] or 'N/A'
     rvs = question_object['rvs'] or {}
     pvs = question_object['pvs'] or {}
     answer_string = question_object['answer'] or 'N/A'
-    # TODO: FIX ANSWER STRING AND ANSWER EXPRESSIONS 
-
     final_question = qg.generate_question(rvs, pvs, question_string, answer_string)
 
     return final_question
