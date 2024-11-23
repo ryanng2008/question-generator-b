@@ -16,6 +16,8 @@ def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, s
         add_category = db.add_question_to_category(inserted_id, categoryid)
         if(add_category):
             return {'success': True, 'inserted_id': str(inserted_id)}
+        else: 
+            return {'success': False, 'message': 'Failed to insert question'}
     else:
         return {'success': False, 'message': 'Failed to insert question'}
     
@@ -70,20 +72,30 @@ def get_all_category_ids(): # Get the whole list of category IDs
     cids = db.get_category_id_list()
     return cids
 
+# TODO: Make this a bulk query
 def get_questions_from_qids(qids: list[str]):
     # TODO: New Method
     # 1. Bulk Query 
     # 2. Run each object through the generator and generate
-    questions = []
-    for qid in qids:
-        question = get_question_from_qid(qid)
-        questions.append(question)
+    questions = db.get_question_objects(qids)
+    # for qid in qids:
+    #     question = get_question_from_qid(qid)
+    #     questions.append(question)
+    question_strings = []
+    for question_object in questions:
+        question_string = question_object['question'] or 'N/A'
+        rvs = question_object['rvs'] or {}
+        pvs = question_object['pvs'] or {}
+        answer_string = question_object['answer'] or 'N/A'
+        final_question = qg.generate_question(rvs, pvs, question_string, answer_string)
+        question_strings.append(final_question)
     return questions
 
 def get_qids_from_cid(cid: str): # Get a list of Question IDs from a category
     category = db.get_category_object(cid)
     qids = category['questions']
     return qids
+
 
 def get_question_from_qid(qid: str): # Generate question from the Question ID 
     # get the question object details from mong
@@ -93,15 +105,13 @@ def get_question_from_qid(qid: str): # Generate question from the Question ID
     #print('QUESTION OBJECT')
     #print(question_object)
     if question_object == 0:
-        return {'question': 'This question does not exist', 'answer': 'No Answer'} # Change this 
-    question_string = question_object['question'] or 'question string is not present in the question object'
+        return {'question': 'No Question', 'answer': 'No Answer'} # Change this 
+    question_string = question_object['question'] or 'N/A'
     rvs = question_object['rvs'] or {}
     pvs = question_object['pvs'] or {}
-    answer_string = question_object['answer'] or 'answer string is not present in the answer object'
-    #print(answer_string)
+    answer_string = question_object['answer'] or 'N/A'
     # TODO: FIX ANSWER STRING AND ANSWER EXPRESSIONS 
 
-    # MODIFY THIS ORIGIN
     final_question = qg.generate_question(rvs, pvs, question_string, answer_string)
 
     return final_question

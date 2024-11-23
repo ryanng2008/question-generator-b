@@ -82,18 +82,19 @@ def get_question_object(question_id):
 # Array Get version of this
 # TODO: Make this a bulk query
 def get_question_objects(question_ids):
-    question_objects = []
-    for question_id in question_ids:
-        question_object = get_question_object(question_id)
-        if question_object != 0: 
-            question_objects.append(question_object)
-    print(question_objects)
-    return question_objects
+    objectid_array = [ObjectId(id_str) for id_str in question_ids]
+    question_objects = questions.find({"_id": {"$in": objectid_array}})
+    # for question_id in question_ids:
+    #     question_object = get_question_object(question_id)
+    #     if question_object != 0: 
+    #         question_objects.append(question_object)
+    # print(question_objects)
+    return list(question_objects)
 
 def add_question_to_category(qid, cid):
     try:
-        answer = categories.update_one({"_id": ObjectId(cid)}, {"$push": {"questions": qid}})
+        answer = categories.update_one({"_id": ObjectId(cid)}, {"$push": {"questions": str(qid)}}) # or str(qid) if there are errors
         return answer.matched_count > 0
     except Exception as e:
-        print(f'Error adding question {qid} to category {cid}')
+        print(f'Error adding question {qid} to category {cid}: {e}')
         return None

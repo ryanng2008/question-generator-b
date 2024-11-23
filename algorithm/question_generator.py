@@ -21,8 +21,11 @@ def evaluate_rvs(raw_rvs: list[dict[str, int]]) -> dict[str, int]:
 
 def evaluate_pvs(raw_pvs: list[dict[str, str]], rvs: dict[str, int]) -> dict[str, float]:
     evaluated_pvs = {}
-    for item in raw_pvs:
-        evaluated_pvs[item['varName']] = evaluate_pv(item['latex'], rvs)
+    try: 
+        for item in raw_pvs:
+            evaluated_pvs[item['varName']] = evaluate_pv(item['latex'], rvs)
+    except Exception as e:
+        return {}
     return evaluated_pvs
 def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float]) -> float:
     # STUFF TO ADD
