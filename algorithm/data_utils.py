@@ -89,7 +89,7 @@ def get_questions_from_qids(qids: list[str]):
         answer_string = question_object['answer'] or 'N/A'
         final_question = qg.generate_question(rvs, pvs, question_string, answer_string)
         question_strings.append(final_question)
-    return questions
+    return question_strings
 
 def get_qids_from_cid(cid: str): # Get a list of Question IDs from a category
     category = db.get_category_object(cid)

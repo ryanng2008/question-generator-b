@@ -64,7 +64,7 @@ def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float]) -> float:
 # - input: string with "[[variable]]" delimiting + pvs dict (name, value)
 # - custom substitution function to replace with the hashmap values
 
-def substitute_question(pvs: dict[str, float], question_string: str) -> str:
+def substitute(pvs: dict[str, float], question_string: str) -> str:
     # implement exceptions later
     subbed_string = question_string
     for key, value in pvs.items():
@@ -82,7 +82,8 @@ def substitute_question(pvs: dict[str, float], question_string: str) -> str:
 def question_generator(raw_rvs, raw_pvs, question_string, answer_string='') -> str:
     evaluated_rvs = evaluate_rvs(raw_rvs)
     evaluated_pvs = evaluate_pvs(raw_pvs, evaluated_rvs)
-    final_question = substitute_question(evaluated_pvs, question_string)
+    final_question = substitute(evaluated_pvs, question_string)
+    #print(f'FINAL QUESTION, {final_question}')
     final_answer = ''#substitute_question(evaluated_pvs, answer_string)
     return { 'question': final_question, 'answer': final_answer}
 
