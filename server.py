@@ -9,7 +9,11 @@ from config.config import get_config
 from bson import json_util
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": [os.getenv('LOCALHOST'), os.getenv('PRODUCTION')]}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": [
+    os.getenv('LOCALHOST'), 
+    os.getenv('PRODUCTION_AWS'), 
+    os.getenv('PRODUCTION_RENDER')
+    ]}})
 
 def token_required_cookies(f):
     @wraps(f)
