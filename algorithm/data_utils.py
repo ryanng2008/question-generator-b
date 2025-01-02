@@ -1,10 +1,10 @@
 import algorithm.mongo as db
 import algorithm.qg_wrapper as qg
-from bson import json_util
 
 
 # ---------------- PARENT FUNCTIONS ----------------
-def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str='', categoryid: str=''):
+def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, str], answer: str='', categoryid: str='', user: str=''):
+
     document = {
         'question': question,
         'rvs': rvs,
@@ -12,14 +12,29 @@ def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, s
         'answer': answer, 
     }
     inserted_id = db.post_question(document)
+    # print(user)
     if inserted_id:
-        add_category = db.add_question_to_category(inserted_id, categoryid)
+        add_category = db.auth_add_q_to_c(inserted_id, categoryid, user)
         if(add_category):
             return {'success': True, 'inserted_id': str(inserted_id)}
         else: 
-            return {'success': False, 'message': 'Failed to insert question'}
+            return {'success': False, 'message': 'You don\'t have permission to add to this category!'}
     else:
         return {'success': False, 'message': 'Failed to insert question'}
+    
+def post_new_category(title: str, description: str, tags: list[str], author: str):
+    document = {
+        'title': title,
+        'description': description,
+        'tags': tags,
+        'author': author,
+        'imageLink': '',
+        'questions': []
+    }
+    inserted_id = db.post_category(document)
+    if inserted_id:
+        return {'success': True, 'inserted_id': str(inserted_id) }
+    return { 'success': False, 'message': 'Failed to post category' }
     
 # if __name__ == "__main__":
 #     question = ''
@@ -34,8 +49,8 @@ def get_category(cid: str): # Get Category Object from Category ID
     #data['_id'] = str(data['_id'])
     return data
 
-def get_categories_by_name(query: str):
-    data = db.get_category_name_regex(query)
+def get_categories_by_name(query: str, user: str):
+    data = db.search_category_perms(query, user)
     return data
 
 def get_all_categories(): # Get the whole list of category OBJECTS

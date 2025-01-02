@@ -30,7 +30,9 @@ def evaluate_pvs(raw_pvs: list[dict[str, str]], rvs: dict[str, int]) -> dict[str
 def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float]) -> float:
     # STUFF TO ADD
     # Function filters
+    print(raw_pv_expression)
     raw_pv_expression = raw_pv_expression.strip("{}")
+    print(raw_pv_expression)
     try:
         expression = sp.sympify(raw_pv_expression)
         #print(f'expression: {expression} of type {type(expression)}')
