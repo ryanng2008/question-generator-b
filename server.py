@@ -142,8 +142,8 @@ def login():
         response = make_response(jsonify({ 
             'success': login['success'], 
             'message': login['message'], 
-            'token': login['token'] })
-            , 200)
+            'token': login['token'] 
+            }), 200)
         # response.set_cookie(
         #     "token",
         #     value=login['token'],
@@ -163,7 +163,11 @@ def register():
     password = data['password']
     register = au.handle_register(username, password)
     if(register['success']):
-        response = make_response(jsonify({ 'success': register['success'], 'message': register['message'] }), 200)
+        response = make_response(jsonify({ 
+            'success': register['success'], 
+            'message': register['message'], 
+            'token': register['token']
+            }), 200)
         # response.set_cookie(
         #     "token",
         #     value=register['token'],
