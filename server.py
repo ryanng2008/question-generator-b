@@ -108,9 +108,12 @@ def get_category_details_name(namequery: str, user: str):
     content = du.get_categories_by_name(namequery, user)
     return json_util.dumps(content)
 
+# import time
+
 @app.route("/categorylist")
 def get_all_categories():
     content = du.get_all_categories()
+    # time.sleep(3)
     return json_util.dumps(content)
 
 

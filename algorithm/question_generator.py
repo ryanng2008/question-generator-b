@@ -26,8 +26,8 @@ def evaluate_pvs(raw_pvs: list[dict[str, str | dict[str, bool | int]]], rvs: dic
             evaluated_pvs[item['varName']] = evaluate_pv(
                 item['latex'], 
                 rvs, 
-                item['coefficient'], 
-                item['dp'])
+                item.get('coefficient', False), 
+                item.get('dp', 0))
     except Exception:
         return {}
     return evaluated_pvs
