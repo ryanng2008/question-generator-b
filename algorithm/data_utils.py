@@ -87,7 +87,6 @@ def get_all_category_ids(): # Get the whole list of category IDs
     cids = db.get_category_id_list()
     return cids
 
-# TODO: Make this a bulk query
 def get_questions_from_qids(qids: list[str]):
     # TODO: New Method
     # 1. Bulk Query 

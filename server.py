@@ -94,7 +94,7 @@ def home():
 @app.route("/questionlist/<categoryid>/<count>")
 def get_question_list(categoryid: str, count: int):
     content = du.questions_from_cid(categoryid, int(count))
-    print(content)
+    # print(content)
     return json_util.dumps(content)
 
 @app.route("/categorydetails/<categoryid>")

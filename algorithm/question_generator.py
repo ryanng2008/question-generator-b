@@ -19,20 +19,23 @@ def evaluate_rvs(raw_rvs: list[dict[str, int]]) -> dict[str, int]:
 # - Initial input: hashmap (variable, clean_expression)
 # - parse each expression with sympy, return a new hashmap
 
-def evaluate_pvs(raw_pvs: list[dict[str, str]], rvs: dict[str, int]) -> dict[str, float]:
+def evaluate_pvs(raw_pvs: list[dict[str, str | dict[str, bool | int]]], rvs: dict[str, int]) -> dict[str, float]:
     evaluated_pvs = {}
     try: 
         for item in raw_pvs:
-            evaluated_pvs[item['varName']] = evaluate_pv(item['latex'], rvs)
-    except Exception as e:
+            evaluated_pvs[item['varName']] = evaluate_pv(
+                item['latex'], 
+                rvs, 
+                item['coefficient'], 
+                item['dp'])
+    except Exception:
         return {}
     return evaluated_pvs
-def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float]) -> float:
+def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float], coeff: bool=False, dp: int=0) -> str: # float | int
     # STUFF TO ADD
     # Function filters
-    print(raw_pv_expression)
     raw_pv_expression = raw_pv_expression.strip("{}")
-    print(raw_pv_expression)
+    # print(raw_pv_expression)
     try:
         expression = sp.sympify(raw_pv_expression)
         #print(f'expression: {expression} of type {type(expression)}')
@@ -47,26 +50,38 @@ def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float]) -> float:
     except:
         print('Error: syntax error while running subs')
         return None
-
+    
+    # return as str here
     final_value = substituted.evalf()
     #print(f'final value: {final_value}')
     if not isinstance(final_value, sp.Float):
         print('Error: not an instance of Float')
         # equivalent to syntax error
         return None
-    return float(final_value)
+    rounded_val = truncate(final_value, dp)
+    if coeff:
+        if rounded_val == 1:
+            return ''
+        if rounded_val == -1:
+            return '-'
+    return str(rounded_val)
+    
     #raw pv expression is a string, rvs is a hashmap (str, float)
     # convert raw_pv into sympy expression
     # substitute it in
     # return a value
 
-
+def truncate(number: int | float, dp: int = 0) -> int | float:
+    if dp == 0:
+        return int(number)
+    multiplier = 10 ** dp
+    return int(number * multiplier) / multiplier
 
 # QUESTION STRING SUBSTITUTION (plus answer string)
 # - input: string with "[[variable]]" delimiting + pvs dict (name, value)
 # - custom substitution function to replace with the hashmap values
 
-def substitute(pvs: dict[str, float], question_string: str) -> str:
+def substitute(pvs: dict[str, str], question_string: str) -> str:
     # implement exceptions later
     subbed_string = question_string
     for key, value in pvs.items():
@@ -75,8 +90,8 @@ def substitute(pvs: dict[str, float], question_string: str) -> str:
             print(f'Error: Value is none for pair {key} and {value}')
             continue 
         # Replace [[key]] in the string with its corresponding value
-        subbed_string = subbed_string.replace(f"[[{key}]]", str(round(value, 2)))
-    print(f'subbed question string: {subbed_string}')
+        subbed_string = subbed_string.replace(f"[[{key}]]", value)
+    # print(f'subbed question string: {subbed_string}')
     return subbed_string
 
 

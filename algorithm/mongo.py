@@ -69,7 +69,7 @@ def get_category_id_list():
         return category_id_list
     for document in category_ids:
         category_id_list.append(document['_id'])
-    print(category_id_list)
+    # print(category_id_list)
     return category_id_list
 
 # WORKING - Get All Category Objects (Raw)
@@ -97,7 +97,7 @@ def get_category_object(category_id):
     if cat_object == None:
         return 0
     cat_object['_id'] = str(cat_object['_id'])
-    print(cat_object)
+    # print(cat_object)
     return cat_object
 
 def search_category_perms(query: str, user: str):
