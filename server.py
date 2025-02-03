@@ -11,8 +11,8 @@ from bson import json_util
 app = Flask(__name__)
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": [
     os.getenv('LOCALHOST'), 
-    os.getenv('PRODUCTION_AWS'), 
-    os.getenv('PRODUCTION_RENDER')
+    os.getenv('PRODUCTION_RENDER'),
+    os.getenv('PRODUCTION_OFFICIAL')
     ]}})
 
 def token_required_cookies(f):
