@@ -159,7 +159,7 @@ def add_question_to_category(qid, cid):
 def auth_add_q_to_c(qid, cid, user):
     try:
         answer = categories.update_one(
-            {"_id": ObjectId(cid), "author": user}, 
+            {"_id": ObjectId(cid)}, # , "author": { '$in': [user, 'public']}
             {"$push": {"questions": str(qid)}}) # or str(qid) if there are errors
         return answer.matched_count > 0
     except Exception as e:
