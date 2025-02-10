@@ -1,3 +1,4 @@
+import re
 import sympy as sp
 import random
 
@@ -90,7 +91,9 @@ def substitute(pvs: dict[str, str], question_string: str) -> str:
             print(f'Error: Value is none for pair {key} and {value}')
             continue 
         # Replace [[key]] in the string with its corresponding value
-        subbed_string = subbed_string.replace(f"[[{key}]]", value)
+        # subbed_string = subbed_string.replace(f"[[{key}]]", value)
+        subbed_string = re.sub(rf"\[\[{key}\]\]", value, subbed_string, flags=re.IGNORECASE)
+
     # print(f'subbed question string: {subbed_string}')
     return subbed_string
 
