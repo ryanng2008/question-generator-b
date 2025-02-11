@@ -77,7 +77,7 @@ def get_category_id_list():
 def get_all_categories():
     category_objects = []
     try:
-        categories_get = categories.find({})
+        categories_get = categories.find({}).sort([("createdat", -1), ("title", 1)])
     except Exception as e:
         # print("Error getting all category objects: ", e)
         return category_objects
@@ -159,7 +159,7 @@ def add_question_to_category(qid, cid):
 def auth_add_q_to_c(qid, cid, user):
     try:
         answer = categories.update_one(
-            {"_id": ObjectId(cid)}, # , "author": { '$in': [user, 'public']}
+            {"_id": ObjectId(cid), "author": { '$in': [user, 'public']}}, # , "author": { '$in': [user, 'public']}
             {"$push": {"questions": str(qid)}}) # or str(qid) if there are errors
         return answer.matched_count > 0
     except Exception as e:

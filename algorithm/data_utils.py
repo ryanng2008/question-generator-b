@@ -1,5 +1,6 @@
 import algorithm.mongo as db
 import algorithm.qg_wrapper as qg
+from datetime import datetime
 
 
 # ---------------- PARENT FUNCTIONS ----------------
@@ -10,6 +11,7 @@ def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, s
         'rvs': rvs,
         'pvs': pvs,
         'answer': answer, 
+        'createdat': datetime.now().timestamp()
     }
     inserted_id = db.post_question(document)
     # print(user)
@@ -22,15 +24,18 @@ def post_new_question(question: str, rvs: list[dict[str, int]], pvs: dict[str, s
     else:
         return {'success': False, 'message': 'Failed to insert question'}
     
-def post_new_category(title: str, description: str, tags: list[str], author: str):
+def post_new_category(title: str, description: str, tags: list[str], author: str, publiccategory: bool):
     document = {
         'title': title,
         'description': description,
         'tags': tags,
         'author': author,
         'imageLink': '',
-        'questions': []
+        'questions': [],
+        'createdat': datetime.now().timestamp()
     }
+    if publiccategory:
+        document['author'] = 'public'
     inserted_id = db.post_category(document)
     if inserted_id:
         return {'success': True, 'inserted_id': str(inserted_id) }

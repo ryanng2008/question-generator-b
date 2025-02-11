@@ -130,9 +130,9 @@ def post_new_question(user):
 @token_required
 def post_new_category(user):
     data = request.get_json()
-    print(data)
-    print(user)
-    result = du.post_new_category(data['title'], data['description'], data['tags'], user)
+    # print(data)
+    # print(user)
+    result = du.post_new_category(data['title'], data['description'], data['tags'], user, data['publiccategory'])
     return jsonify(result)
 
 @app.route("/login", methods=['POST'])
