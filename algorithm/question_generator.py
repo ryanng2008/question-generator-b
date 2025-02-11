@@ -104,7 +104,7 @@ def question_generator(raw_rvs, raw_pvs, question_string, answer_string='') -> s
     evaluated_pvs = evaluate_pvs(raw_pvs, evaluated_rvs)
     final_question = substitute(evaluated_pvs, question_string)
     #print(f'FINAL QUESTION, {final_question}')
-    final_answer = ''#substitute_question(evaluated_pvs, answer_string)
+    final_answer = substitute(evaluated_pvs, answer_string)
     return { 'question': final_question, 'answer': final_answer}
 
 
