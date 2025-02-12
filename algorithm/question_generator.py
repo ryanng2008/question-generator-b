@@ -1,6 +1,10 @@
 import re
 import sympy as sp
 import random
+from latex2sympy2 import latex2sympy
+from sympy.parsing.latex import parse_latex
+
+
 
 
 # RV EVALUATION
@@ -32,10 +36,60 @@ def evaluate_pvs(raw_pvs: list[dict[str, str | dict[str, bool | int]]], rvs: dic
     except Exception:
         return {}
     return evaluated_pvs
-def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float], coeff: bool=False, dp: int=0) -> str: # float | int
+
+def evaluate_pv(raw_pv_expression: str, rvs: dict[str, float], coeff: bool = False, dp: int = 0) -> str:
+    """
+    Evaluate a LaTeX expression with given variable substitutions.
+
+    Returns:
+        str: The evaluated result as a string, or None if there's an error.
+    """
+    # Remove outer braces if present
+    #raw_pv_expression = raw_pv_expression.strip("{}")
+
+    try:
+        # Convert LaTeX to SymPy expression
+        expression = latex2sympy(raw_pv_expression)
+    except Exception as e:
+        print(f"Error: Failed to parse LaTeX expression. Details: {e}")
+        return None
+
+    try:
+        # Substitute variables with their values
+        substituted = expression.subs(rvs)
+    except Exception as e:
+        print(f"Error: Failed to substitute variables. Details: {e}")
+        return None
+
+    try:
+        # Evaluate the expression numerically
+        final_value = substituted.evalf()
+    except Exception as e:
+        print(f"Error: Failed to evaluate expression. Details: {e}")
+        return None
+
+    # Ensure the result is a SymPy Float
+    if not isinstance(final_value, sp.Float):
+        print("Error: Result is not a numerical value.")
+        return None
+
+    # Truncate the result to the specified number of decimal places
+    rounded_val = truncate(final_value, dp)
+
+    # Handle coefficients if required
+    if coeff:
+        if rounded_val == 1:
+            return ""
+        if rounded_val == -1:
+            return "-"
+
+    return str(rounded_val)
+
+
+def evaluate_pv_old(raw_pv_expression: str, rvs: dict[str, float], coeff: bool=False, dp: int=0) -> str: # float | int
     # STUFF TO ADD
     # Function filters
-    raw_pv_expression = raw_pv_expression.strip("{}")
+    raw_pv_expression = raw_pv_expression.strip("{}") # why?
     # print(raw_pv_expression)
     try:
         expression = sp.sympify(raw_pv_expression)
@@ -107,6 +161,7 @@ def question_generator(raw_rvs, raw_pvs, question_string, answer_string='') -> s
     final_answer = substitute(evaluated_pvs, answer_string)
     return { 'question': final_question, 'answer': final_answer}
 
+# print(evaluate_pv2('\\frac{3}{5}', {}, False, 1))
 
 
 
